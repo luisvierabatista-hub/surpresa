@@ -276,6 +276,7 @@
     <script>
         const DATA_ESPECIAL = "2025-05-23"; 
         const audio = document.getElementById("musica");
+        let abaAtual = 'fotos';
 
         function entrarNoSite() {
             const capa = document.getElementById("capa-preparada");
@@ -312,6 +313,7 @@
         }
 
         function aba(s) {
+            abaAtual = s;
             document.getElementById('secao-fotos').style.display = s === 'fotos' ? 'flex' : 'none';
             document.getElementById('secao-texto').style.display = s === 'texto' ? 'flex' : 'none';
             document.getElementById('secao-musica').style.display = s === 'musica' ? 'flex' : 'none';
@@ -335,6 +337,7 @@
             }, 1000);
 
             setInterval(() => {
+                if (abaAtual === 'texto') return; // Para a chuva se estiver na aba da carta
                 const p = document.createElement("div"); p.className = "particle";
                 p.innerHTML = ["💜", "✨", "🌸", "🎉", "💍"][Math.floor(Math.random()*5)];
                 p.style.left = Math.random() * 100 + "vw";

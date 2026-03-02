@@ -25,7 +25,12 @@
             color: #4a148c;
         }
 
-        /* CAPA INICIAL */
+        .emoji-fix {
+            color: initial !important;
+            text-shadow: none !important;
+            -webkit-text-fill-color: initial !important;
+        }
+
         #capa-preparada {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -49,7 +54,18 @@
         }
         .btn-preparada:hover { background: white; color: var(--primary); }
 
-        /* TEXTINHOS LATERAIS */
+        #secao-perguntas {
+            display: none;
+            z-index: 2500;
+        }
+
+        .btn-pergunta {
+            padding: 10px 25px; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; margin: 5px; transition: 0.3s;
+        }
+        .btn-sim { background: var(--primary); color: white; }
+        .btn-nao { background: #ff5252; color: white; }
+
         .texto-lateral {
             position: fixed;
             font-family: 'Dancing Script', cursive;
@@ -76,6 +92,7 @@
             max-width: 350px;
             z-index: 200;
             box-shadow: var(--shadow);
+            display: none; 
         }
 
         h2 { font-family: 'Dancing Script', cursive; font-size: 28px; color: var(--primary); margin-bottom: 10px; }
@@ -85,8 +102,6 @@
             text-align: center; font-size: 18px; color: var(--primary); outline: none; margin: 20px 0;
             display: block; box-sizing: border-box; background: white;
         }
-        
-        input[type="date"]::-webkit-datetime-edit { display: flex; justify-content: center; width: 100%; }
 
         .btn-entrar {
             width: 100%; padding: 16px; border: none; border-radius: 50px;
@@ -123,9 +138,9 @@
             line-height: 1.6; max-height: 55vh; overflow-y: auto; text-align: left;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 6px solid var(--primary);
             font-family: 'Dancing Script', cursive; font-size: 22px;
+            color: #000 !important;
         }
 
-        /* ESTILO DA ABA DE MÚSICAS */
         .music-list {
             display: flex; flex-direction: column; gap: 12px; width: 90%; max-width: 400px;
             max-height: 60vh; overflow-y: auto; padding: 10px;
@@ -135,7 +150,6 @@
             justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             cursor: pointer; border: 2px solid transparent; transition: 0.3s;
         }
-        .music-item:active { transform: scale(0.95); border-color: var(--primary); }
         .music-info { display: flex; flex-direction: column; text-align: left; }
         .music-name { font-weight: bold; color: var(--primary); font-size: 14px; }
         .music-dedication { font-size: 11px; color: #666; font-style: italic; }
@@ -144,7 +158,6 @@
             position: fixed; bottom: 20px; right: 20px; background: var(--glass); backdrop-filter: blur(15px);
             padding: 15px; border-radius: 25px; display: none; width: 250px; 
             z-index: 1100; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            transition: all 0.4s ease;
         }
 
         .music-player.minimized { width: 50px; height: 50px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -153,12 +166,26 @@
 
         .toggle-icon { display: none; color: var(--primary); }
 
-        .progress-container { width: 100%; height: 5px; background: #eee; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: var(--primary); }
+        .progress-container { width: 100%; height: 6px; background: #eee; border-radius: 10px; margin: 10px 0; overflow: hidden; cursor: pointer; position: relative; }
+        .progress-fill { width: 0%; height: 100%; background: var(--primary); pointer-events: none; }
 
-        .controls-row { display: flex; align-items: center; justify-content: space-between; }
+        .controls-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .play-btn { background: var(--primary); border: none; color: white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .volume-slider { width: 60px; accent-color: var(--primary); }
+        .nav-music-btn { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 20px; padding: 5px; }
+
+        .volume-controls { display: flex; align-items: center; gap: 8px; margin-top: 10px; width: 100%; }
+        #volumeSlider { flex-grow: 1; cursor: pointer; accent-color: var(--primary); height: 4px; }
+
+        #counter {
+            color: var(--primary);
+            font-weight: bold;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
         .particle { position: fixed; top: -20px; pointer-events: none; animation: fall linear infinite; z-index: 10; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
@@ -167,29 +194,37 @@
 <body>
 
     <div id="capa-preparada">
-        <span style="font-size: 60px; margin-bottom: 10px;">🌹</span>
+        <span class="emoji-fix" style="font-size: 60px; margin-bottom: 10px;">🌹</span>
         <h1>Preparada?</h1>
         <p style="margin-bottom: 30px; opacity: 0.9;">Você está mesmo preparada para isso?</p>
-        <button class="btn-preparada" onclick="entrarNoSite()">Estou preparada! ❤️</button>
+        <button class="btn-preparada" onclick="entrarNoSite()">Estou preparada! <span class="emoji-fix">❤️</span></button>
+    </div>
+
+    <div id="secao-perguntas" class="container">
+        <h2 id="texto-pergunta">Eu sou o homem da sua vida? <span class="emoji-fix">💍</span></h2>
+        <div style="margin-top: 20px;">
+            <button class="btn-pergunta btn-sim" onclick="proximaPergunta()">Sim! <span class="emoji-fix">❤️</span></button>
+            <button class="btn-pergunta btn-nao" onmouseover="fugir(this)" onclick="alert('Clica no Sim, boba! 😂')">Não.. <span class="emoji-fix">😢</span></button>
+        </div>
     </div>
 
     <div class="texto-lateral side-left" id="text-L">
-        Você é a razão do meu sorriso ✨<br>
-        MINHA PRINCESA 👸<br>
-        TE AMO INFINITAMENTE 💜
+        Você é a razão do meu sorriso <span class="emoji-fix">✨</span><br>
+        MINHA PRINCESA <span class="emoji-fix">👸</span><br>
+        TE AMO INFINITAMENTE <span class="emoji-fix">💜</span>
     </div>
     <div class="texto-lateral side-right" id="text-R">
-        Dona do meu coração ❤️<br>
-        Obrigado por tudo 🌸<br>
-        Sempre nós amoor 💍
+        Dona do meu coração <span class="emoji-fix">❤️</span><br>
+        Obrigado por tudo <span class="emoji-fix">🌸</span><br>
+        Sempre nós amoor <span class="emoji-fix">💍</span>
     </div>
 
     <div class="container" id="login">
-        <span style="font-size: 40px;">🎁</span>
-        <h2>Abra o presente Meu Amooor ❤️</h2>
+        <span class="emoji-fix" style="font-size: 40px;">🎁</span>
+        <h2>Abra o presente Meu Amooor <span class="emoji-fix">❤️</span></h2>
         <p style="font-size: 13px; color: #666; margin-top: -5px;">Coloque a data onde tudo começou...</p>
         <input type="date" id="dateInput">
-        <button class="btn-entrar" onclick="verificarData()">Ver Surpresa ✨</button>
+        <button class="btn-entrar" onclick="verificarData()">Ver Surpresa <span class="emoji-fix">✨</span></button>
     </div>
 
     <nav id="nav-menu">
@@ -199,7 +234,7 @@
     </nav>
 
     <div id="secao-fotos" class="section">
-        <h2 style="color:white; margin:0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">PARABÉNSS MEU AMOOR 🎉</h2>
+        <h2 style="color:white; margin:0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">PARABÉNSS MEU AMOOR <span class="emoji-fix">🎉</span></h2>
         <div class="gallery">
             <img src="foto1.jpg.jpeg" class="active">
             <img src="foto2.jpg.jpeg">
@@ -210,46 +245,46 @@
             <img src="foto7.jpg.jpeg">
             <img src="foto8.jpg.jpeg">
         </div>
-        <p id="counter" style="color:var(--primary); font-weight:bold; background:white; padding:8px 20px; border-radius:30px; font-size:13px; margin-top: 10px;"></p>
+        <div id="counter"></div>
     </div>
 
     <div id="secao-texto" class="section">
         <div class="letter-card">
-            <div style="background: linear-gradient(to bottom, #4a148c, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">
-                <h3 style="text-align:center; margin-top:0; font-size: 28px;">Minha Carta 🎉</h3>
-                <p>
-                    <b>Meu Amor,</b><br><br>
-                    [COLE AQUI SEU TEXTO GIGANTE...]<br><br>
-                    Espero que cada foto e cada frase te faça lembrar do quanto você é amada.<br><br>
-                    <b>Com todo meu amor, para sempre.</b>
-                </p>
-            </div>
+            <h3 style="text-align:center; margin-top:0; font-size: 28px; color: var(--primary);">Meu textin <span class="emoji-fix">🥺</span></h3>
+            <p>
+                <b>Meu Amor,</b><br><br>
+                Venho aqui através deste texto te dar parabénsss🥳🥳 e muitos anos de vida minha estrelinhaa⭐, minha princesa, minha lindonaaa, minha fofinhaa, meu amoor❤️, e saiba q vc n vai ta mais sozinha no seu aniversário e n vai ter mais aql sensação ruim pq agr vc tem a mim e eu n vou deixar vc ficar desse jeito ta bao ?😁, que Deus abençoe muitoo a sua vida, e muito obrigado por tudoo, pelos momentos bons, gosto de tudo em vc tudinhoo viuu, fico até sem palavras.. n consigo demonstrar com palavras oq eu sinto por vc.., e que venham mais momentos assim, a melhor coisa q aconteceu na minha vida foi conhecer vc meu amor e a pessoa incrível q você é, e espero q realmente um dia eu me case 🥰 com vc, eu não falo só por falar e sim é o que eu realmente qro por mais que ainda tem bastante tempo pra isso eu fico imaginando ksksksk, e tbm que nós meu amor q nós tenhamos filhos ;-; pq n né skskksks um menino e uma menina ksksksks, que este amor dure até o dia da minha mortee 😁 sempre eu vou te amar❤️. As vezes eu não sei como você gosta de um cara como eu ;-; eu não tenho muito pra oferecer sou simplizin sksksksk, tenho medo de não ta fazendo certo, pq vc me faz mt bemm, qnd eu te vejo meu coração acelera, fico sem te ver por mais de 2 dias já fico louco, a flaxi-edade bate vem aquele medo "se ela achar alguém melhor que eu ?" as vezes eu quero falar as coisas mas sinto medo de estar sendo mt meloso e vc enjoar de mim. Eu amo o jeito que vc me olha qnd eu faço graça skskkskaka ;-;, eu acho vc muito fofinhaa jogano vôlei ksksksks, me sinto muito bem perto de vc, eu amo fazer qualquer coisa com vc, estudar, ler, ouvi msc, jogar e principalmente conversar pessoalmente ou por mensagem sempre me sinto bem, por mais que as vezes eu tenho medo de estar te incomodando ;-;. Vc não tem noção o quanto eu te amo❤️ não é aquele amor só de falar é realmente um amor q eu n consigo explicar.. da vontade de falar q eu te amoo toda hora ;-; sksksk, e sempre estarei com vc te apoiando viuu, torcendo por vc. Não sou muito de escrever textos, mais eu senti vontade de escrever esse em uma madrugada de quinta feira antes do nosso primeiro segundo encontro ;-; dps que vc tinha ido dormir ksksksksksk demostrando meu amor e minha gratidão por você to muito ansioso aqui pra ver oq vc vai achar desse texto de um cara simplizin ;-; ksksksksks, n tenho muito pra te oferecer, só tenho o meu amor e meu carinho, vc é única, nunca tive alguém que nem vc, sempre fui rejeitado e jogado pra bosta kskskksks, já tinha até desistido de encontrar alguém algum dia, de tanto q eu fui jogado pra bosta sksksks, mas ai vc apareceu.., pq é o destinooo 😁 e ce não fosse a Nicole perguntando ce eu gostava de vc eu não sei como seria, tenho mt medo de perder vc, eu n sei oq seria de mim ce eu te perdesse, vc é muito mas muitoo importante pra mim, e eu n qro uma "namorada" de escola eu qro ficar com vc pelo resto da minha vida essa é a meta ksksksks;-;. O nosso segundo primeiro encontro foi o melhor dia da minha vida, nesses últimos anos nunca tinha me sentido taoo bem assim eu amo ouvir vc falar sobre qualquer coisa eu só presto atenção em vc e esqueço do mundo todo e minha única preocupação é vc, o seu sorriso faz meu coração disparar segurar sua mão e andar por ai me faz ver o como eu sou sortudo de ter vc, não sei oq vai acontecer nesses anos pra frente mas oq eu mais qro é vc ao meu lado pra sempree, eu não consigo mais viver sem vc pra mim é impossível, eu to escrevendo esse texto com lágrimas nos olhos.., pq eu tenho muito medo mais mt msm de te perder, os dias vai se passando e cada dia q passa eu fico mais apaixonado ainda.. e eu nunca vou te abandonar sempre estarei com vc, cada dia q eu passo com vc eu n qro que aquele dia acabe nunquinhaa, vc sempre me surpreende com alguma coisa, eu te amo pela pessoa que vc é, msm quando eu estou triste com algo sempre q eu cvs com vc eu fico mt feliz e me sinto confortável. Nossos pais ce conhecerem aql dia deixou eu mt feliz eles conversando foi mt bom e engraçado ksskskks, passar o final de semana com vc foi algo q eu nunca vou esquecer foi mt bom, mt msm e espero q dai só vem progresso atrás de progresso sksksk, eu amoo o seu sorriso, eu amoo o seus olhos, eu amoo o seu cabelo, eu amoo o seu jeitinho, eu amoo te abraçar, eu amoo andar de mãos dadas com vc, eu amoo fica do seu ladinho meu coração dispara skksksks eu amoo tudo em vc tudinhooo, eu te amoooo❤️❤️, eu fico imaginando eu acordando e vc do meu ladinho.. kskskkskss, o meu pensamento vai longee, as vezes eu demoro pra durmir de tanto q eu fico pensando em vc e imaginando ksksksks, nossaa como eu te amooo❤️ skskksksks, sempre eu qro fala o como eu te amoo nem sei ce isso é chato pra vc mais é q eu n consigo ficar sem falar sksksk ;-;, e a primeira coisa q eu faço qnd chego na sala e ver ce vc ta lá no seu lugarzin eu fico mt feliz e vejo o como vc é lindaa sempree, pra mim vc é perfeitaa e eu fico pensando "como é q essa perfeição me acha bonito" pq eu realmente n sei ;-;, meu sonho é viajar com vc pelo mundo só nois dois ksksksks ia ser bem legal, mas deixa eu fica rico skskskks, nossa como vc é incrível meu amor fico até sem palavras.., cada dia vc me surpreende msm ein, vc me entende msm quando é coisas bestas. É amor voltei aq, faz tempo q eu n escrevo skksksks bom, Domingo dia 4 de janeiro eu fiz uma brincadeira q vc n sabia c era brincadeira msm amor e eu vo o jeito q vc fico e eu fiquei bravo cmg msm as vezes eu tiro a sua paz com isso amor skskksks mas eu qro q saiba amor q eu faço essas graças pq eu amo brincar com vc meu bem, confesso q as vezes eu passo dos limites e q eu tenho q parar com isso, e antes disso foi a primeira vez q nois foi call com a câmera ligada amor ksksks eu ameii, eu n tava aguentando mais de tanta sdds de vc e eu ainda to com mt sdds, morrendo de sdds na vdd eu n aguento ficar tanto tempo longe sem vc amor, sem te ver, sem rir com vc, cvs pessoalmente e eu sei q já falei tantas vezes amor mas é q eu n consigo parar de falar o tanto q eu te amooo❤️. Muitas pessoas dizem que amam mas n fazem nd, n demostram q ama, mas eu n amor oq eu posso fazer pra te demonstrar que eu te amoo dmaiss eu façoo meu amor😝😝, tem muita coisa q eu qro viver com vc meu amor, qro passar um ano novo com vc, qro passar um natal com vc, qro fazer parte algum dia da sua família meu amor. Eu qria ter condições de comprar coisas pra vc meu amor, mas ainda n tenho😔, esse ano veio sem eu te ver amor🥺, eu n gostei nadinha disso, mas faz parte da vida ksskskks. E amor o seu medo de n ta td bem cmg ou com seus amgs qnd ta nas férias, ta td bem meu amor eu msm n vo te dx nunquinha e seus amigos tbm n meu amor e c algum deles te deixarem é pq n merecia ser seu amigo amor, vc, amor é incrível n é pq eu to falando, e sim pq vc é msm minha lindonaa, e meu amor pd contar cmg, amor me conte das suas inseguranças me conte de algo q te incomodou msm q foi besta amor, eu qro estar cntg na felicidade ou na tristeza amor eu sei q nós nem namoramos oficialmente ainda amor e nós nem casamos ainda mais eu qro falar isso agr msm eu to aq por vc amor eu melhoro por vc e por hj é isso meu bem como eu sempre falo amor, espero q esteja mimindo bem minha bb lindonaa😁😁. Aé vdd meu amor n posso esquecer o dia q eu fui na sua toca/casa, aiai aql dia meu amor o nervosismo tava alto skksksksks mas dps de um tempo me senti confortável. 
+            Eu tava mt felizz por vc ter me chamado msm skksksks, foi vergonhoso mais foi td mt bom amor😝, e tbm qnd nois foi tomar sorvete juntoss, foi a última vez q eu te vi em 2025🥺🥺, sério foi mt bom amor minha família e vc saindo pra tomar sorvetin sksksks aiai, aql dia amor eu estava determinado a pegar a sua mão na frente deles skskks e no final lá na praça fiquei grudado em vc te ouvindo falar de qlqr coisa e eu ameii skskks, q nossos pais possam virar amgs amor🙏🏻🙏🏻 e agr eu vo durmir amor pq eu falei pra vc q eu iria bem antes ksskks, mas acho q vc vai entender né amor🤔(eu espero) dkksksksksah voltei dnv amor sksksksk, nosso último filme asistido no cinema amor o nosso último encontro só nois dois foi incrível, amor ameii aql dia tbm ksks, e tbm as fotos amor KSLSKSKSKS foi bem engraçado e aql dia eu tava dispoto pra lascar um beijão em vc mas n tive coragi dksksksk, e dps o seu pai foi e me levou pra casa sério eu tava bem sem graça amor mas foi mt bom dksksksk, foi mt bom.o sorvete q tomamos foi td muito bom sksksksk e agr eu vo msm amor fuii. É amor hj foi mt bom nois cvs sobre as coisas ksskksksk, aiai como eu te amoo minha princesa, tenho q me esforçar ao máximo pro vc amor, eu n entendo pq ficam rindo de mim pq eu to com sdds de vc amor eu n entendo isso, já me falaram q isso é só uma paixão de escola mas, como é só uma paixão de escola sendo q eu choro de sdds amor e eu te amo de td o meu coração amoer🥺🥺🥺, por mais q as vezes nois tem opniões diferentes é assim msm em um relacionamente e oq faz nois crescer amor é entender isso e discutir sobre amor. Sabe amor eu amoooo e fico feliz q vc me entende amor e q vc me ouve e falar dos nos sentimentos é mt bom amor e vc amor n é um fardo pra mim e nunca será vc é minha garotinha perfeita e é dona do meu coração meu bem e como eu já disse amor algm q acha isso, n merece fazer parte da sua vida e amor, n dx q as pessoas falem mal de vc e vc fica calada e c eu tiver na hr me segura amor pq eu vo falar um monte skskskskskks, até pq amor ngm mexe com a minha gatonaa😝😝, mas é isso amor vo mimir e imaginar vc aq cmg heheheheh🫦, e amanhã eu já to indo embora te verrr amorr agr eu vo lá fuiiii. Aiai minha bb ksksksks, to aq amor dps já de um mês sem escrever e ta chegando o seu aniversárioo amoor e nesse 1 mês que passou aconteceu bastante coisa amor skskks, dps da viagem e que nois sai mds amor que lindeza vc tava amor, fazia tanto tempo que eu n te via amor que eu tava encantado dmais amor, foi td muito legal o filme tbm tudooo amor, o nosso beijo skskks, eu gostei amor🥺🥺, n foi ruim amor até pq nda com vc é ruim amor, e tbm foi a nossa primeira vez pow e eu gostei sério msm viu, foi vergonhoso foi amor, mais eu gostei, AMO FICAR GRUDADO EM VC AMOR, SUA LINDEZA, amor vc tava uma gatona e eu n parava de te admirar amor, eu tava td bobinho lá amor ksksksks, sempre que eu olhava pra vc sksksks. E ainda dps disso tudo amor, eu fui na sua casa e fiquei mais 1 hr com vc lá agarradinho🥺🥺🥺❤️, é claro que pareceu 20 minutos só né amor😔😔, mas n dx de ser um bom dia com vc minha gatona❤️😝😝. Depois disso amor eu comecei o ipms ksskks, e foi ai que nois fico mais próximos ainda um do outro, pq nois c via quase td dia, e nois ficava juntinho amor antes das aulas começarem, ent eu tava muito feliz por te ver na sua casa msm amor🥺, e tbm eu tive a oportunidade de pedir permissão do seu pai pra namorar com vc amor🥺, e ele deixou😭😭😭😭, foi um dos dias mais felizes da minha vida amor, e foi em uma quarta feira🥺❤️, confesso que dps fiquei mt frustrado e bravo por ele n ter deixado vc ir na chácara mais ao msm tempo eu tava feliz amor🥺🙏🏻, pq eu consegui msm com medo fazer isso amor😁😁, dps disso amor, vc veio aq em casa skskksks, e mdsss amor que dia foi esse😁🥺🥺, dia bom com vc amor, as cvs da minha mãe e da minha tia, os tops vídeos meus no youtube ksskksksks, e dps nois jogando e ficando juntin aq no meu quarto foi muitooo baoo amoor🥺🥺🙏🏻. Ai dps eu fui conhecer seus avós e tios🥺🥺🥺, e ali eu já tava felizão amor, por ter chegado até esse ponto, msm que eu tava com vergoinha amor, vc tava lá pra mim🥺🥺, n saiu do meu lado e esse dia eu gostei muitooo amoor, tbm teve os acontecimentos de eu chorar amor skskks, de tanto que eu tava sobrecarregado amor e desabei🥺, falando td vdd possível, e falando do meu amor por vc minha linda, e hj amor segunda feira dia 09/02 fiquei grudado em vc amor🥺🥺🥺, e foi mt maravilhoso, VOCÊ É INCRÍVEL MINHA BB, e é isso amor skskks, n vejo a hr de te mandar isso dia 23 de março amor. HEHEHEHEHEHHEHE❤️😝😝😝. E amor esse texto é um pouco do meu amor que eu consigo expressar viuu, pd ta com uns milhares de erros de português mas eu qro passar esse sentimento pra vc amor, e agr eu vo lá pq já era pra eu ter dormido amor ksksskks🤔🤔❤️, fuiii minha mulher perfeitaaa. 
+            AMOOR to aq dnv hehehehhe, aiai vida já aconteceu umas coisinhas já desde da última vez ksksks, aiai amor como eu te amo viuu🥺🥺🥺, hj é dia 18/02 e dia 13/02 na sexta nois saiuu amoor, e foi muitaoo bãooo hehehehe, assistimo o filmim, fiquemo juntinhos e simplismente foi incrível, até pq hehehehe eu amo ficar com vc é mt bom msm a sensação é boa me sinto confortável em vc meu bem slk amor n daaa🥺🥺❤️. E é vacilei legal com vc no sábado amor🥺🥺🥺, me arrependo dmasi disso, pq realmente n teve o pq, e eu sei que eu to no erro e eu já to bem melhor com isso amor, por mais que foi eu que fui um babaca com vc eu aprendi com isso amor, pq eu qro melhorar por vc, qro ser um bom namorado eu n qro ser tóxico, é difícil mais n é impossível amor, e eu to real bem melhor, eu vo fazer de td pra eu melhorar cada dia mais por vc meu amor. E bom hj dia 18/02, eu to sem energia a mais de uma hr e minha mãe desligo a net, ent eu n to cvs com vc😭😭😭😭, é uma drogaaaa, mas por incrível que parece amor eu to aq pensando em vc, torcendo pra essa bomba de energia voltar logooo🥺🥺, pq é mt bom cvs com vc🥺, e eu to derreteno e os mosquito tbm tão na maldade mas né faz parte amor. Domingo eu fiquei 7 hrs sem cvs com vc.., n gostei n amor😭😭😭😭, qria ter cvs bastante, mas eu fiquei feliz que vc gostou de ficar lá, comeu bastante docin ent foi bãooo, mas é mt ruim sem vc viu meu amor🥺🥺, mt ruim msm minha bb😔😔, claro que as vezes vc ta ocupada, mas é ruim ficar sem vc por horas🥺😭😭😭, mas aiai amor VOCÊ É A MINHA FUTURA ESPOSA N DAAAA, QRO NEM SABERR, MINHA MAIOR CERTZA É VC AMOOR, mas é issi meu bem🥺, vo torcer pra voltar cedo essa bomba de energia, ateee qnd eu aparecer dnv amoor, ah EU AMO VC . AMOOOR ta chegando o dia minha garota, ta chegando o dia do seu aniversário🥺🥺🥺, primeiro aniversário de muitos que eu vou estar ao seu lado vida, bom esse "textinho" esta chegando ao fim amor skskksks, eu espero realmente que vc goste do meu presente, venho pensaso nele faz um bom tempo, e amor ter VOCÊ é mt sorte viu SUA LINDONAAA, hj é segunda feira dia 2 de março, faltando 21 dias pro seu aniversário, e eu to mt ansiosooo amoor, VOCÊ merece esse meu carinho e meu amor, EU TE AMO VIDA, VOCÊ É TUDO DE BOM MEU BEM, Fico mt feliz por vc se sentir amada por mim meu bem, eu sei que as vezes nois briga eu faço merda skskskks, mas eu melhoro por vc amor e isso faz parte em um relacionamento né sksksk, os dois vão aprendendo um com o outro, oq mais importa msm é o AMOR que nois sente um pelo outro vida, ontem amor, que dia MARAVILHOSO, SÉRIO AMOR, EU AMO VC DMAIS SUA LINDA, não é um amor fingido n vida slk, nois tem mt coisa pra viver juntos amor e ontem só me mostrou novamente que eu fui feito pra vc amor que eu sou o  SEU HOMEM e que eu VOU ME CASAR COM VC AMOR, slk vida n daaa amoor, vc amor, me faz mt feliz, sempre to com um sorrisão qnd te vejo e qnd estou com vc amor, o seu sorriso muda tudo. Aiai vida vc merece meu amor, nunca vou te dx sozinha no seu aniversário viu, sempre vou estar presente meu bem, posso n ser muita coisa amor sksksksk, mas vou estar presente te dando o meu amor e meu carinho, eu sei que as vezes te chateio amor, me perdoa por isso🥺🥺, mas eu NUNCA vou deixar de te AMAR viuuuu, SUA LINDONAAA, eu qro ter filhos com vc amor, ter uma família, qro ser um marido que cvs e n que brigue ou grite amor🥺🥺, eu n qro fazer isso com vc amor, que nem o dia que eu tava com o tom de voz elevado, eu já estou melhorando isso meu bem, eu qro que vc se sinta segura e confortável ao meu lado amor, e é isso meu amor. EU TE AMOOOOOOOOOOOOOOOOOOOOOO MINHA MULHER PERFEITAAAAA, MINHA GAROTAAAA, MINHA PRINCESAAA, MINHA FUTURA MARIDAAAA, MÃE DOS MEUS FILHOSSS, MEU SONHOOO, MEU MUNDOOO, TUDO OQ EM SEMPRE QUISSS, SÉRIO AMOR, VC É TUDO PRA MIM VIUUUUU, TE AMOOOOO SUA GATINHAAAA. Então meu amor novamente falo FELIZ ANIVERSÁRIO MINHA GAROTAAA🎉🎉🎉🎉, e que Deus venha nos abençoar cada dia mais meu bem🙏🏻🥺🥺. Bom amor, acho que esse é o final do "textinho" ksksksks, mas talvez eu escreva antes de te entregar ksksks, bom amor eu espero que vc realmente goste, e o meu maior desejo é vc amor, ter vc, qro vc pra sempreee viuuuuu, e é isso amor. 
+                <br><br>
+                <b style="color: var(--primary);">Com carinho: Seu Homem😝😝. ❤️</b>
+            </p>
         </div>
     </div>
 
     <div id="secao-musica" class="section">
         <h2 style="color:white; margin:0 0 20px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Playlist para Você 🎵</h2>
         <div class="music-list">
-            <div class="music-item" onclick="trocarMusica('musica.mp3.mp3', 'Pupila - ANAVITÓRIA')">
+            <div class="music-item" onclick="trocarMusicaPorIndex(0)">
                 <div class="music-info">
                     <span class="music-name">Pupila</span>
                     <span class="music-dedication">"Você faz minha pupila dilatar amor.."</span>
                 </div>
-                <span>▶️</span>
+                <span class="emoji-fix">▶️</span>
             </div>
-            <div class="music-item" onclick="trocarMusica('musica2.mp3.mp3', 'Meu Abrigo - Melim')">
+            <div class="music-item" onclick="trocarMusicaPorIndex(1)">
                 <div class="music-info">
                     <span class="music-name">Meu Abrigo</span>
                     <span class="music-dedication">"Essa me lembra quando nois ta juntos.."</span>
                 </div>
-                <span>▶️</span>
+                <span class="emoji-fix">▶️</span>
             </div>
-            <div class="music-item" onclick="trocarMusica('musica3.mp3.mp3', 'Lisboa - ANAVITÓRIA & Lenine')">
+            <div class="music-item" onclick="trocarMusicaPorIndex(2)">
                 <div class="music-info">
                     <span class="music-name">Lisboa</span>
                     <span class="music-dedication">"Quero levar-te comigo pra onde eu for..."</span>
                 </div>
-                <span>❤️</span>
+                <span class="emoji-fix">❤️</span>
             </div>
         </div>
     </div>
@@ -261,10 +296,18 @@
                 <div id="track-name" style="font-size: 10px; font-weight:bold; color: var(--primary);">🎵 Pupila - ANAVITÓRIA</div>
                 <button onclick="minimizarPlayer()" style="background:none; border:none; cursor:pointer; font-size: 16px; color: var(--primary);">▼</button>
             </div>
-            <div class="progress-container"><div id="progress" class="progress-fill"></div></div>
+            <div class="progress-container" onclick="pularPara(event)">
+                <div id="progress" class="progress-fill"></div>
+            </div>
             <div class="controls-row">
+                <button onclick="musicaAnterior()" class="nav-music-btn">⏮</button>
                 <button onclick="toggleMusica()" id="playIcon" class="play-btn">▶</button>
-                <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="0.7" oninput="audio.volume = this.value">
+                <button onclick="proximaMusica()" class="nav-music-btn">⏭</button>
+            </div>
+            <div class="volume-controls">
+                <span class="emoji-fix" style="font-size: 12px;">🔈</span>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1" oninput="audio.volume = this.value">
+                <span class="emoji-fix" style="font-size: 12px;">🔊</span>
             </div>
         </div>
     </div>
@@ -275,41 +318,110 @@
 
     <script>
         const DATA_ESPECIAL = "2025-05-23"; 
+        const DIA_ABERTURA = 23;
+        const MES_ABERTURA = 2; // Março (0-Jan, 1-Fev, 2-Mar)
+        const CODIGO_TESTE = "2000-01-01";
+        
         const audio = document.getElementById("musica");
         let abaAtual = 'fotos';
+        let perguntaPasso = 0;
+
+        const playlist = [
+            { arquivo: 'musica.mp3.mp3', nome: 'Pupila - ANAVITÓRIA' },
+            { arquivo: 'musica2.mp3.mp3', nome: 'Meu Abrigo - Melim' },
+            { arquivo: 'musica3.mp3.mp3', nome: 'Lisboa - ANAVITÓRIA & Lenine' }
+        ];
+        let musicaAtualIndex = 0;
+
+        function proximaPergunta() {
+            const texto = document.getElementById("texto-pergunta");
+            perguntaPasso++;
+            if (perguntaPasso === 1) texto.innerHTML = 'Quer viver comigo pra sempre amor ?? <span class="emoji-fix">🥰</span>';
+            else if (perguntaPasso === 2) texto.innerHTML = 'Você me ama infinitamente vida ?? <span class="emoji-fix">🌌</span>';
+            else if (perguntaPasso === 3) texto.innerHTML = 'Você quer CASAR COMIGO ?? <span class="emoji-fix">💍</span>';
+            else if (perguntaPasso === 4) texto.innerHTML = 'Eu sou o seu sonho amor ?? <span class="emoji-fix">✨</span>';
+            else if (perguntaPasso === 5) texto.innerHTML = 'Vamos ficar juntos pra sempre amor ?? <span class="emoji-fix">💍</span>';
+            else {
+                document.getElementById("secao-perguntas").style.display = "none";
+                document.getElementById("login").style.display = "block";
+            }
+        }
+
+        function fugir(btn) {
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.position = "fixed"; btn.style.left = x + "px"; btn.style.top = y + "px";
+        }
 
         function entrarNoSite() {
             const capa = document.getElementById("capa-preparada");
             capa.style.opacity = "0";
-            setTimeout(() => capa.style.display = "none", 800);
+            setTimeout(() => {
+                capa.style.display = "none";
+                document.getElementById("secao-perguntas").style.display = "block";
+            }, 800);
+        }
+
+        function verificarData() {
+            const agora = new Date();
+            const diaHoje = agora.getDate();
+            const mesHoje = agora.getMonth();
+            const inputVal = document.getElementById("dateInput").value;
+
+            // CÓDIGO DE TESTE
+            if (inputVal === CODIGO_TESTE) {
+                abrirSite();
+                return;
+            }
+
+            // DATA CORRETA
+            if (inputVal !== DATA_ESPECIAL) {
+                alert("Data incorreta! Tente novamente, meu amor. 💜");
+                return;
+            }
+
+            // TRAVA DO DIA 23 DE MARÇO
+            if (mesHoje < MES_ABERTURA || (mesHoje === MES_ABERTURA && diaHoje < DIA_ABERTURA)) {
+                alert("Ainda não é o momento, meu amor! 🤭 Espere até o dia 23 de Março para abrir seu presente. ❤️");
+                return;
+            }
+
+            abrirSite();
+        }
+
+        function abrirSite() {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("nav-menu").style.display = "flex";
+            document.getElementById("secao-fotos").style.display = "flex";
+            document.getElementById("player-ui").style.display = "block";
+            if(window.innerWidth >= 900) {
+                document.getElementById("text-L").style.display = "block";
+                document.getElementById("text-R").style.display = "block";
+            } else { minimizarPlayer(); }
+            audio.play();
+            document.getElementById("playIcon").innerHTML = "⏸";
+            iniciar();
         }
 
         function minimizarPlayer() { document.getElementById("player-ui").classList.add("minimized"); }
         function expandirPlayer() { document.getElementById("player-ui").classList.remove("minimized"); }
 
-        function trocarMusica(arquivo, nome) {
-            audio.src = arquivo;
-            document.getElementById("track-name").innerText = "🎵 " + nome;
+        function atualizarPlayer() {
+            const track = playlist[musicaAtualIndex];
+            audio.src = track.arquivo;
+            document.getElementById("track-name").innerText = "🎵 " + track.nome;
             audio.play();
             document.getElementById("playIcon").innerHTML = "⏸";
         }
 
-        function verificarData() {
-            if (document.getElementById("dateInput").value === DATA_ESPECIAL) {
-                document.getElementById("login").style.display = "none";
-                document.getElementById("nav-menu").style.display = "flex";
-                document.getElementById("secao-fotos").style.display = "flex";
-                document.getElementById("player-ui").style.display = "block";
-                
-                if(window.innerWidth >= 900) {
-                    document.getElementById("text-L").style.display = "block";
-                    document.getElementById("text-R").style.display = "block";
-                } else { minimizarPlayer(); }
+        function proximaMusica() { musicaAtualIndex = (musicaAtualIndex + 1) % playlist.length; atualizarPlayer(); }
+        function musicaAnterior() { musicaAtualIndex = (musicaAtualIndex - 1 + playlist.length) % playlist.length; atualizarPlayer(); }
+        function trocarMusicaPorIndex(index) { musicaAtualIndex = index; atualizarPlayer(); }
 
-                audio.play();
-                document.getElementById("playIcon").innerHTML = "⏸";
-                iniciar();
-            } else { alert("Data incorreta! 💜"); }
+        function pularPara(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            audio.currentTime = (x / rect.width) * audio.duration;
         }
 
         function aba(s) {
@@ -317,7 +429,6 @@
             document.getElementById('secao-fotos').style.display = s === 'fotos' ? 'flex' : 'none';
             document.getElementById('secao-texto').style.display = s === 'texto' ? 'flex' : 'none';
             document.getElementById('secao-musica').style.display = s === 'musica' ? 'flex' : 'none';
-            
             document.getElementById('btn-fotos').className = s === 'fotos' ? 'active' : '';
             document.getElementById('btn-texto').className = s === 'texto' ? 'active' : '';
             document.getElementById('btn-musica').className = s === 'musica' ? 'active' : '';
@@ -332,13 +443,21 @@
             }, 3500);
 
             setInterval(() => {
-                const dias = Math.floor((new Date() - new Date(DATA_ESPECIAL + "T00:00:00")) / 86400000);
-                document.getElementById("counter").innerText = `JÁ É ${dias} DIAS QUE EU AMO VC`;
+                const dataInicio = new Date(DATA_ESPECIAL + "T00:00:00");
+                const agora = new Date();
+                const diff = agora - dataInicio;
+                const dias = Math.floor(diff / 86400000);
+                const horas = Math.floor((diff % 86400000) / 3600000);
+                const minutos = Math.floor((diff % 3600000) / 60000);
+                const segundos = Math.floor((diff % 60000) / 1000);
+                document.getElementById("counter").innerHTML = 
+                    `JÁ SÃO ${dias} DIAS, ${horas}h, ${minutos}m e ${segundos}s<br>QUE EU AMO VOCÊ ❤️`;
             }, 1000);
 
             setInterval(() => {
-                if (abaAtual === 'texto') return; // Para a chuva se estiver na aba da carta
-                const p = document.createElement("div"); p.className = "particle";
+                if (abaAtual === 'texto') return; 
+                const p = document.createElement("div"); 
+                p.className = "particle emoji-fix";
                 p.innerHTML = ["💜", "✨", "🌸", "🎉", "💍"][Math.floor(Math.random()*5)];
                 p.style.left = Math.random() * 100 + "vw";
                 p.style.fontSize = (Math.random() * 20 + 15) + "px";
